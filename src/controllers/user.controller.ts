@@ -3,6 +3,12 @@ import database from "../database/conection";
 
 const router = express.Router();
 
+interface usersData {
+  name: string;
+  email: string;
+  password: string;
+}
+
 // Cadastrar usuário
 router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
@@ -12,26 +18,49 @@ router.post("/signup", async (req, res) => {
     const userRef = await database.ref("users").push({ name, email, password });
     res.send("Usuário cadastrado com sucesso");
   } catch (error) {
-    res.status(500).send("Ocorreu um erro ao cadastrar o usuário");
+    res.status(401).send("Ocorreu um erro ao cadastrar o usuário");
   }
 });
 
 // Logar usuário
-router.post("/signin", (req, res) => {
+router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
+
+  try {
+    const result = database
+      .query("users")
+      .filter("email", "==", email)
+      .take(1)
+      .get();
+    const users: usersData[] = (await result).getValues();
+
+    if (users.length > 0) {
+      const user = users[0];
+      return res.json(user);
+    }
+
+    res.json([]);
+  } catch (error) {
+    res.status(401).send("Ocorreu um erro ao cadastrar o usuário");
+  }
 });
 
 // Selecionar usuários
 router.get("/", async (req, res) => {
   try {
     const result = await database.ref("users").get();
-    const users = await result.val();
+    const usersData = await result.val();
 
-    if (users) res.json(users);
+    const users = Object.keys(usersData).map((userId) => ({
+      id: userId,
+      ...usersData[userId],
+    }));
+
+    if (users) return res.json(users);
 
     res.send([]);
   } catch (error) {
-    res.status(500).send("Ocorreu um erro ao selecionar os usuários");
+    res.status(401).send("Ocorreu um erro ao selecionar os usuários");
   }
 });
 

@@ -1,10 +1,19 @@
 import express from "express";
+import database from "../database/conection";
 
 const router = express.Router();
 
 // Criar tarefa
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const { title, description } = req.body;
+
+  try {
+    const task = await database.ref("tasks").set({ title, description });
+
+    res.send("Tarefa criada com sucesso");
+  } catch (error) {
+    res.status(401).send({ error });
+  }
 });
 
 // Selecionar tarefa
