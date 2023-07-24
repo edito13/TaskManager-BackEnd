@@ -46,7 +46,7 @@ router.post("/signin", async (req, res) => {
 });
 
 // Selecionar usuários
-router.get("/", async (req, res) => {
+router.get("/user", async (req, res) => {
   try {
     const result = await database.ref("users").get();
     const usersData = await result.val();
@@ -64,5 +64,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Pegando a instância do meu app para definir um padrão para as rotas das requisiões do usuário
-module.exports = (app: any) => app.use("/user", router);
+export default router;

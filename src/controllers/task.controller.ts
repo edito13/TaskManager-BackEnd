@@ -4,7 +4,7 @@ import database from "../database/conection";
 const router = express.Router();
 
 // Criar tarefa
-router.post("/", async (req, res) => {
+router.post("/task", async (req, res) => {
   const { title, description } = req.body;
   const userId = "lkfaxdq9000ah4bimmj2y53d";
 
@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
 });
 
 // Selecionar tarefa
-router.get("/:id", async (req, res) => {
+router.get("/task/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -36,7 +36,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Selecionar tarefas
-router.get("/", async (req, res) => {
+router.get("/task", async (req, res) => {
   const userId = "lkfaxdq9000ah4bimmj2y53d";
 
   try {
@@ -59,7 +59,7 @@ router.get("/", async (req, res) => {
 });
 
 // Atualizar tarefa
-router.put("/:id", async (req, res) => {
+router.put("/task/:id", async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
 
@@ -83,7 +83,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Deleter tarefa
-router.delete("/:id", async (req, res) => {
+router.delete("/task/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -105,4 +105,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = (app: any) => app.use("/task", router);
+export default router;
