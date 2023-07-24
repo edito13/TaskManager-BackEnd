@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.get("/", (req, res) => res.send("Servidor OK!"));
 
-require("../routes/tasks")(app);
+require("../controllers/task.controller")(app);
 require("../controllers/user.controller")(app);
 
 app.use(router);

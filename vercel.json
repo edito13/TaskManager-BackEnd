@@ -1,4 +1,5 @@
 {
+  "name": "taskManager",
   "version": 2,
   "builds": [
     {
