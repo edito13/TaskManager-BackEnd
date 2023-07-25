@@ -1,8 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import Jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 import database from "../database/conection";
 
-const auth = async (next: NextFunction, req: Request, res: Response) => {
+dotenv.config();
+
+const auth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   try {
@@ -15,7 +18,7 @@ const auth = async (next: NextFunction, req: Request, res: Response) => {
 
     // Se tiver as duas partes então devemos checar se a primeira é mesmo ou começa por Baerer
     const [scheme, token] = parts;
-    if (!/^Baerer$/i.test(scheme)) throw "Token mal formatado";
+    if (!/^Bearer$/i.test(scheme)) throw "Token mal formatado";
 
     // Pegando a base para descodificar o token
     const secret = process.env.SECRET as string;
@@ -28,7 +31,7 @@ const auth = async (next: NextFunction, req: Request, res: Response) => {
     const userId = result.key;
 
     // Se não existir um usuário com este Id então o Token é inválido
-    if (!id) throw "Token Inválido";
+    if (!userId) throw "Token Inválido";
 
     req.userId = userId;
 

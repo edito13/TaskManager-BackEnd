@@ -82,6 +82,21 @@ router.post("/user/signin", async (req, res) => {
   }
 });
 
+// Selecionar usuário
+router.get("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await database.ref(`users/${id}`).get();
+    const user = result.key;
+
+    if (user) return res.json(user);
+
+    res.send([]);
+  } catch (error) {
+    res.status(401).send("Ocorreu um erro ao selecionar os usuários");
+  }
+});
+
 // Selecionar usuários
 router.get("/users", async (req, res) => {
   try {

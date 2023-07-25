@@ -1,3 +1,3 @@
-type JwtPayload = {
+interface JwtPayload {
   id: string;
-};
+}

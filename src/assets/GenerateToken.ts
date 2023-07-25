@@ -7,7 +7,7 @@ dotenv.config();
 
 export const generateToken = (id: string) => {
   const secret = process.env.SECRET as string;
-  const token = Jwt.sign(id, secret);
+  const token = Jwt.sign({ id }, secret);
 
   return token;
 };
