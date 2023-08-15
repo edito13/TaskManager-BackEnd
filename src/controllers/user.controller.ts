@@ -1,19 +1,10 @@
-import express from "express";
+import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import database from "../database/conection";
-import { generateToken } from "../assets/GenerateToken";
-
-const router = express.Router();
-
-interface usersData {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-}
+import generateToken from "../assets/GenerateToken";
 
 // Cadastrar usuário
-router.post("/user/signup", async (req, res) => {
+export const signupUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   try {
@@ -44,10 +35,10 @@ router.post("/user/signup", async (req, res) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
+};
 
 // Logar usuário
-router.post("/user/signin", async (req, res) => {
+export const signinUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
@@ -80,10 +71,10 @@ router.post("/user/signin", async (req, res) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
+};
 
 // Selecionar usuário
-router.get("/users/:id", async (req, res) => {
+export const selectUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const result = await database.ref(`users/${id}`).get();
@@ -95,10 +86,10 @@ router.get("/users/:id", async (req, res) => {
   } catch (error) {
     res.status(401).send("Ocorreu um erro ao selecionar os usuários");
   }
-});
+};
 
 // Selecionar usuários
-router.get("/users", async (req, res) => {
+export const selectUsers = async (req: Request, res: Response) => {
   try {
     const result = await database.ref("users").get();
     const usersData = await result.val();
@@ -114,10 +105,10 @@ router.get("/users", async (req, res) => {
   } catch (error) {
     res.status(401).send("Ocorreu um erro ao selecionar os usuários");
   }
-});
+};
 
 // Deleter user
-router.delete("/user/:id", async (req, res) => {
+export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -137,6 +128,4 @@ router.delete("/user/:id", async (req, res) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
-
-export default router;
+};

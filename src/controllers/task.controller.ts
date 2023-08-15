@@ -1,11 +1,9 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import database from "../database/conection";
-import auth from "../middlewares/auth.middleware";
-
-const router = express.Router();
+import selectAllUserTaks from "../assets/selectAllUserTasks";
 
 // Criar tarefa
-router.post("/task", auth, async (req: Request, res: Response) => {
+export const createTask = async (req: Request, res: Response) => {
   const { title, description } = req.body;
   const userId = req.userId;
 
@@ -20,17 +18,7 @@ router.post("/task", auth, async (req: Request, res: Response) => {
     const totalPages = Math.ceil(totalTasks / limit);
 
     // Pegar novos dados
-    const result = await database
-      .query("tasks")
-      .filter("userId", "==", userId)
-      .skip((page - 1) * limit)
-      .take(limit)
-      .get();
-
-    const tasks = result.map((task) => ({
-      id: task.key,
-      ...task.val(),
-    }));
+    const tasks = await selectAllUserTaks(userId, page, limit);
 
     if (tasks) return res.json({ tasks, totalPages });
 
@@ -38,10 +26,10 @@ router.post("/task", auth, async (req: Request, res: Response) => {
   } catch (error) {
     res.status(401).send({ error });
   }
-});
+};
 
 // Selecionar tarefa
-router.get("/task/:id", async (req, res) => {
+export const selectTask = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -54,10 +42,10 @@ router.get("/task/:id", async (req, res) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
+};
 
 // Selecionar tarefas
-router.get("/task", auth, async (req: Request, res: Response) => {
+export const selectTasks = async (req: Request, res: Response) => {
   const userId = req.userId;
 
   try {
@@ -73,17 +61,8 @@ router.get("/task", auth, async (req: Request, res: Response) => {
 
     const totalPages = Math.ceil(totalTasks.length / itemsPerPage);
 
-    const result = await database
-      .query("tasks")
-      .filter("userId", "==", userId)
-      .skip((pageNumber - 1) * itemsPerPage)
-      .take(itemsPerPage)
-      .get();
-
-    const tasks = result.map((task) => ({
-      id: task.key,
-      ...task.val(),
-    }));
+    // Pegar Tasks filtradas
+    const tasks = await selectAllUserTaks(userId, pageNumber, itemsPerPage);
 
     if (tasks) return res.json({ tasks, totalPages });
 
@@ -91,10 +70,10 @@ router.get("/task", auth, async (req: Request, res: Response) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
+};
 
 // Atualizar tarefa:
-router.put("/task/:id", auth, async (req: Request, res: Response) => {
+export const editTask = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, description } = req.body;
   const userId = req.userId;
@@ -113,18 +92,8 @@ router.put("/task/:id", auth, async (req: Request, res: Response) => {
 
     const totalPages = Math.ceil(totalTasks.length / limit);
 
-    // Pegar novos dados
-    const result = await database
-      .query("tasks")
-      .filter("userId", "==", userId)
-      .skip((page - 1) * limit)
-      .take(limit)
-      .get();
-
-    const tasks = result.map((task) => ({
-      id: task.key,
-      ...task.val(),
-    }));
+    // Pegar Tasks alteradas
+    const tasks = await selectAllUserTaks(userId, page, limit);
 
     if (tasks) return res.json({ tasks, totalPages });
 
@@ -132,10 +101,10 @@ router.put("/task/:id", auth, async (req: Request, res: Response) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
+};
 
 // Deletar tarefa
-router.delete("/task/:id", auth, async (req: Request, res: Response) => {
+export const deleteTask = async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = req.userId;
 
@@ -151,18 +120,8 @@ router.delete("/task/:id", auth, async (req: Request, res: Response) => {
 
     const totalPages = Math.ceil(totalTasks.length / limit);
 
-    // Pegar novos dados
-    const result = await database
-      .query("tasks")
-      .filter("userId", "==", userId)
-      .skip((page - 1) * limit)
-      .take(limit)
-      .get();
-
-    const tasks = result.map((task) => ({
-      id: task.key,
-      ...task.val(),
-    }));
+    // Pegar novas lista de Tasks
+    const tasks = await selectAllUserTaks(userId, page, limit);
 
     if (tasks) return res.json({ tasks, totalPages });
 
@@ -170,6 +129,4 @@ router.delete("/task/:id", auth, async (req: Request, res: Response) => {
   } catch (error) {
     res.status(401).send(error);
   }
-});
-
-export default router;
+};

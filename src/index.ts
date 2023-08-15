@@ -2,8 +2,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 
-import taskController from "./controllers/task.controller";
-import userController from "./controllers/user.controller";
+import taskController from "./routers/task.router";
+import userController from "./routers/user.router";
 
 // Configuração necessária para acessar variavéis de ambiente
 dotenv.config();
@@ -17,7 +17,7 @@ const PORT = defaultPort || 8000;
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => res.send("Servidor OK!"));
+app.get("/", (req, res) => res.send("Server is OK!"));
 
 app.use(taskController);
 app.use(userController);
